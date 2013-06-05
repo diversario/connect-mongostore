@@ -1,6 +1,6 @@
 {
   "name": "connect-mongostore",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "MongoDB session store for Connect",
   "keywords": [
     "connect",
@@ -32,6 +32,6 @@
   "scripts": {
     "test": "make test"
   },
-  "main": "./lib/connect-mongostore",
+  "main": "index",
   "engines": "node >= 0.8.x"
 }
