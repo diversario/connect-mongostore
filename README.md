@@ -16,22 +16,43 @@ via npm:
 
   Pass a fully-qualified URI as the only option (e.g., `mongodb://127.0.0.1:27017/myDatabase`), or an object:
 
-  - `db` Database name OR fully instantiated node-mongo-native object
+  - `db` Can be three different things:
+    - database name (string)
+    - mongo-native database instance
+    - object with replica set options. These options require two fields:
+      + `servers` Array of replica set server configurations similar to:
+
+          ```javascript
+            {
+              "host" : "127.0.0.1", // required
+              "port" : 27017, // required
+              "options" : { // all optional
+                "autoReconnect" : false,
+                "poolSize" : 200,
+                "socketOptions" : {
+                  "timeout" : 0,
+                  "noDelay" : true,
+                  "keepAlive" : 1,
+                  "encoding" : "utf8"
+                }
+              }
+            }
+          ```
+          Configuration options explained [here](http://mongodb.github.io/node-mongodb-native/markdown-docs/database.html)
+      + `replicaSetOptions` An object with a single `rs_name` property specifying your replica set name
   - `collection` Collection (optional, default: `sessions`) 
-  - `host` MongoDB server hostname (optional, default: `127.0.0.1`)
-  - `port` MongoDB server port (optional, default: `27017`)
+  - `host` MongoDB server hostname (optional, default: `127.0.0.1`). Not needed for Replica Sets.
+  - `port` MongoDB server port (optional, default: `27017`) Not needed for Replica Sets.
   - `username` Username (optional)
   - `password` Password (optional)
   - `auto_reconnect` This is passed directly to the MongoDB `Server` constructor as the auto_reconnect
                      option (optional, default: false).
   - `ssl` Use SSL to connect to MongoDB (optional, default: false).
-  - `url` Connection url of the form: `mongodb://user:pass@host:port/database/collection`.
-          If provided, information in the URL takes priority over the other options.
-  - `mongoose_connection` in the form: `someMongooseDb.connections[0]` to use an existing mongoose connection. (optional)
+  - `url` Connection url of the form: `mongodb://user:pass@host:port/database/collection`. If provided, information in the URL takes priority over the other options.
+  - `mongoose_connection` in the form: `mongooseDatabase.connections[0]` to use an existing mongoose connection. (optional)
   - `stringify` If false, connect-mongostore will serialize sessions using `JSON.stringify` before
                 setting them, and deserialize them with `JSON.parse` when getting them.
-                (optional, default: false). This is useful if you are using types that 
-                MongoDB doesn't support.
+                (optional, default: false). Note that deserialization will not revive Dates, Object IDs and other non-plain objects.
 
 The second parameter to the `MongoStore` constructor is a callback which will be called once the database connection is established.
 This is mainly used for the tests, however you can use this callback if you want to wait until the store has connected before
@@ -45,10 +66,8 @@ With express:
     var MongoStore = require('connect-mongostore')(express);
 
     app.use(express.session({
-        secret: settings.cookie_secret,
-        store: new MongoStore({
-          db: settings.db
-        })
+        secret: 'my secret',
+        store: new MongoStore({db: 'express_sessions'})
       }));
 
 With connect:
@@ -70,7 +89,7 @@ With connect:
   mind that any value less than 60 seconds is pointless, as mongod will
   only delete expired documents in a TTL collection every minute.
 
-  For more information, consult connect's [session documentation](http://www.senchalabs.org/connect/session.html)
+  For more information, consult connect's [session documentation](http://www.senchalabs.org/connect/session.html).
 
 ## Tests
 
