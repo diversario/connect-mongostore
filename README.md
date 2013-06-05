@@ -2,7 +2,7 @@
 
   MongoDB session store for Connect
 
-  [![Build Status](https://secure.travis-ci.org/diversario/connect-mongostore.png?branch=master)](http://travis-ci.org/diversario/connect-mongostore)
+  [![Build Status](https://secure.travis-ci.org/diversario/connect-mongostore.png?branch=develop)](http://travis-ci.org/diversario/connect-mongostore)
 
 ## Installation
 
