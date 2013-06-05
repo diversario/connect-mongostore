@@ -1,6 +1,6 @@
 {
   "name": "connect-mongostore",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "MongoDB session store for Connect",
   "keywords": [
     "connect",
@@ -18,7 +18,7 @@
     "url": "https://github.com/diversario/connect-mongostore/issues"
   },
   "dependencies": {
-    "mongodb": "1.2.x",
+    "mongodb": ">= 1.2.x",
     "lodash": "1.2.x"
   },
   "directories": {
