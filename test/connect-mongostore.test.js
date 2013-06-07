@@ -376,7 +376,7 @@ describe('Connect-mongostore', function () {
         assert.throws(function () {
           var store = new MongoStore({db: {}});
           store.getCollection();
-        }, /no method/);
+        }, /`db` option must be/);
       })
       
       it('support options object with URL', function (done) {
