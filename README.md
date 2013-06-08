@@ -4,6 +4,8 @@
 
   [![Build Status](https://secure.travis-ci.org/diversario/connect-mongostore.png?branch=develop)](http://travis-ci.org/diversario/connect-mongostore)
   
+  [![Coverage Status](https://coveralls.io/repos/diversario/connect-mongostore/badge.png?branch=feature%2Fcoveralls)](https://coveralls.io/r/diversario/connect-mongostore?branch=feature%2Fcoveralls)
+  
 ### Why?
   
   Existing stores work fine but we needed a store that supports replica sets configuration passed to it.
