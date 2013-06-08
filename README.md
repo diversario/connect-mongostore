@@ -3,6 +3,10 @@
   MongoDB session store for Connect
 
   [![Build Status](https://secure.travis-ci.org/diversario/connect-mongostore.png?branch=develop)](http://travis-ci.org/diversario/connect-mongostore)
+  
+  ## Why?
+  
+  Existing stores work fine but we needed a store that supports replica sets configuration passed to it.
 
 ## Installation
 
@@ -19,7 +23,9 @@ via npm:
   - `db` Can be three different things:
     - database name (string)
     - mongo-native database instance
-    - object with replica set options. These options require two fields:
+    - object with replica set options. These options requires:
+    
+      + `name` Database name
       + `servers` Array of replica set server configurations similar to:
 
           ```javascript
@@ -45,11 +51,12 @@ via npm:
   - `port` MongoDB server port (optional, default: `27017`) Not needed for Replica Sets.
   - `username` Username (optional)
   - `password` Password (optional)
-  - `auto_reconnect` This is passed directly to the MongoDB `Server` constructor as the auto_reconnect
+  - `expireAfter` Duration of session cookies in milliseconds (e.g., ones with `maxAge` not defined). Defaults to 2 weeks.
+    May be useful if you see a lot of orphaned sessions in the database and want them removed sooner than 2 weeks.
+  - `autoReconnect` This is passed directly to the MongoDB `Server` constructor as the auto_reconnect
                      option (optional, default: false).
   - `ssl` Use SSL to connect to MongoDB (optional, default: false).
-  - `url` Connection url of the form: `mongodb://user:pass@host:port/database/collection`. If provided, information in the URL takes priority over the other options.
-  - `mongoose_connection` in the form: `mongooseDatabase.connections[0]` to use an existing mongoose connection. (optional)
+  - `mongooseConnection` in the form: `mongooseDatabase.connections[0]` to use an existing mongoose connection. (optional)
   - `stringify` If false, connect-mongostore will serialize sessions using `JSON.stringify` before
                 setting them, and deserialize them with `JSON.parse` when getting them.
                 (optional, default: false). Note that deserialization will not revive Dates, Object IDs and other non-plain objects.
@@ -67,7 +74,7 @@ With express:
 
     app.use(express.session({
         secret: 'my secret',
-        store: new MongoStore({db: 'express_sessions'})
+        store: new MongoStore({'db': 'sessions'})
       }));
 
 With connect:
@@ -85,7 +92,7 @@ With connect:
   expire when the user closes their browser (maxAge: null). In accordance
   with standard industry practices, connect-mongostore will set these sessions
   to expire two weeks from their last 'set'. You can override this 
-  behavior by manually setting the maxAge for your cookies -- just keep in
+  behavior by manually setting the maxAge for your cookies - just keep in
   mind that any value less than 60 seconds is pointless, as mongod will
   only delete expired documents in a TTL collection every minute.
 
@@ -98,6 +105,14 @@ You need `mocha`.
     make test
 
 The tests use a database called `connect-mongostore-test`.
+
+Note that replica set tests will fail unless you 1) have a replica set, and 2) set the address of that replica set in `connect-mongostore.test.js` file.
+
+You can check code coverage report by running
+
+    make test-cov
+    
+You must have [jscoverage](https://github.com/visionmedia/node-jscoverage). Coverage report will be in `coverage.html` file.
 
 
 ## Stuff
