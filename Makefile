@@ -11,7 +11,7 @@ coverage:
 	@ISTANBUL_REPORTERS=lcov CONNECT_MONGOSTORE_COV=1 mocha -R mocha-istanbul -t 20s $(TESTS)
 	@mv lcov.info reports
 	@mv lcov-report reports
-	@cat reports/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+	@if [ $TRAVIS == "true" ]; then cat reports/lcov.info | ./node_modules/coveralls/bin/coveralls.js; fi
 	@$(MAKE) clean
 
 clean:
