@@ -33,7 +33,7 @@
     "mongoose": ">= 2.6.x"
   },
   "scripts": {
-    "test": "make test"
+    "test": "make coveralls"
   },
   "main": "index",
   "engines": "node >= 0.8.x"
