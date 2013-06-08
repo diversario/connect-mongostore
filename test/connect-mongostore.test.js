@@ -10,7 +10,7 @@ var connect = require('connect')
 
 var MongoStore = require('../.')(connect)
 
-var defaultOptions = {'w': 1, 'host': '127.0.0.1', 'port': 27017, 'auto_reconnect': true, 'ssl': false}
+var defaultOptions = {'w': 1, 'host': '127.0.0.1', 'port': 27017, 'autoReconnect': true, 'ssl': false}
   , dbName = 'connect-mongostore-test' 
   , collectionName = 'sessions'
   , defaultDbOptions = {'db': dbName}
@@ -134,7 +134,7 @@ function openDatabase(opts, cb) {
         opts.host || defaultOptions.host,
         opts.port || defaultOptions.port,
         {
-          'auto_reconnect': opts.auto_reconnect || defaultOptions.auto_reconnect,
+          'auto_reconnect': opts.autoReconnect || defaultOptions.autoReconnect,
           'ssl': opts.ssl || defaultOptions.ssl
         }),
       {'w': opts.w || defaultOptions.w})
@@ -187,7 +187,7 @@ function getRandomString() {
 
 describe('Connect-mongostore', function () {
   function tests(ctorOptions, suiteCallback) {
-    describe('Basic stuff like', function () {
+    describe('Basic stuff:', function () {
       var store, db, collection
 
       function init(opts, done) {
@@ -353,6 +353,31 @@ describe('Connect-mongostore', function () {
               assert.deepEqual(session.session, s)
               assert.strictEqual(session._id, sid)
               
+              assert(expirationDate - session.expires < 1000) // a generous 1 second for stuff to run
+
+              done()
+            })
+          })
+        })
+      })
+
+      it('saves session with overriden default expiration', function (done) {
+        init({'expireAfter': 10000}, function () {
+          var sid = getRandomString()
+          var s = {
+            'test': getRandomString(),
+            'cookie': {}
+          }
+
+          store.set(sid, s, function (err, session) {
+            assert.strictEqual(err, null)
+
+            var expirationDate = new Date(Date.now() + 10000) // two weeks
+
+            collection.findOne({'_id': sid}, function (err, session) {
+              assert.deepEqual(session.session, s)
+              assert.strictEqual(session._id, sid)
+
               assert(expirationDate - session.expires < 1000) // a generous 1 second for stuff to run
 
               done()
