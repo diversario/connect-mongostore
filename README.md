@@ -4,7 +4,7 @@
 
   [![Build Status](https://secure.travis-ci.org/diversario/connect-mongostore.png?branch=master)](http://travis-ci.org/diversario/connect-mongostore)
   
-  [![Coverage Status](https://coveralls.io/repos/diversario/connect-mongostore/badge.png)](https://coveralls.io/r/diversario/connect-mongostore)
+  [![Coverage Status](https://coveralls.io/repos/diversario/connect-mongostore/badge.png?branch=develop)](https://coveralls.io/r/diversario/connect-mongostore)
   
 ### Why?
   
