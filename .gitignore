@@ -10,5 +10,6 @@ atlassian-ide-plugin.xml
 .idea/
 *.log
 *.iml
-lib-cov
+lib-cov/
+reports/
 coverage.html

@@ -2,17 +2,19 @@ REPORTER = spec
 
 test:
 	@mocha --reporter $(REPORTER)
+	@$(MAKE) coverage
 
-test-cov:
+coverage:
+	@rm -rf lib-cov reports
+	@mkdir reports
+	@istanbul instrument --output lib-cov lib
+	@ISTANBUL_REPORTERS=lcov CONNECT_MONGOSTORE_COV=1 mocha -R mocha-istanbul -t 20s $(TESTS)
+	@mv lcov.info reports
+	@mv lcov-report reports
+	@cat reports/lcov.info | ./node_modules/coveralls/bin/coveralls.js
 	@$(MAKE) clean
-	@$(MAKE) lib-cov
-	@CONNECT_MONGOSTORE_COV=1 $(MAKE) test REPORTER=html-cov > coverage.html
-	@$(MAKE) clean
-
-lib-cov:
-	@jscoverage lib lib-cov
 
 clean:
 	@rm -rf lib-cov
 
-.PHONY: test test-cov
+.PHONY: test test-cov coverage
