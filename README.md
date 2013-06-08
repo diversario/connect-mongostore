@@ -2,9 +2,9 @@
 
   MongoDB session store for Connect
 
-  [![Build Status](https://secure.travis-ci.org/diversario/connect-mongostore.png?branch=develop)](http://travis-ci.org/diversario/connect-mongostore)
+  [![Build Status](https://secure.travis-ci.org/diversario/connect-mongostore.png?branch=master)](http://travis-ci.org/diversario/connect-mongostore)
   
-  [![Coverage Status](https://coveralls.io/repos/diversario/connect-mongostore/badge.png?branch=feature%2Fcoveralls)](https://coveralls.io/r/diversario/connect-mongostore?branch=feature%2Fcoveralls)
+  [![Coverage Status](https://coveralls.io/repos/diversario/connect-mongostore/badge.png)](https://coveralls.io/r/diversario/connect-mongostore)
   
 ### Why?
   
