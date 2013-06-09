@@ -112,9 +112,9 @@ Note that replica set tests will fail unless you 1) have a replica set, and 2) s
 
 You can check code coverage report by running
 
-    make test-cov
+    make coverage
     
-You must have [jscoverage](https://github.com/visionmedia/node-jscoverage). Coverage report will be in `coverage.html` file.
+Coverage report will be in `reports/lcov-report/index.html` file.
 
 
 ## Stuff
