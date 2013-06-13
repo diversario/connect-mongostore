@@ -14,6 +14,7 @@ var defaultOptions = {'w': 1, 'host': '127.0.0.1', 'port': 27017, 'autoReconnect
   , dbName = 'connect-mongostore-test' 
   , collectionName = 'sessions'
   , defaultDbOptions = {'db': dbName}
+  , expirationPeriod = 1000 * 60 * 60 * 24 * 14 // 2 weeks
 
 var mongooseDb = {'mongooseConnection': mongoose.connect('mongodb://127.0.0.1:27017/' + dbName).connections[0]}
   , mongoNativeDb = {'db': new mongo.Db(dbName, new mongo.Server('127.0.0.1', 27017, {}), {'w': defaultOptions.w})}
@@ -276,15 +277,20 @@ describe('Connect-mongostore', function () {
         init(function () {
           var sid = getRandomString()
             , s = {'test': getRandomString()}
+            , date = new Date
           
           store.set(sid, s, function (err, session) {
             assert.strictEqual(err, null)
     
             collection.findOne({'_id': sid}, function (err, session) {
+              assert(session.expires - date < expirationPeriod + 100)
+              delete session.expires
+              
               assert.deepEqual(session, {
                 'session': s,
                 '_id': sid
               })
+              
     
               done()
             })
@@ -296,14 +302,18 @@ describe('Connect-mongostore', function () {
         init({'stringify': true}, function () {
           var sid = getRandomString()
             , s = {'test': getRandomString()}
+            , date = new Date
           
           store.set(sid, s, function (err, session) {
             assert(!err)
       
             collection.findOne({'_id': sid}, function (err, session) {
+              assert(session.expires - date < expirationPeriod + 100)
+              delete session.expires
+              
               assert.deepEqual(session, {
-                session: JSON.stringify(s),
-                _id: sid
+                'session': JSON.stringify(s),
+                '_id': sid
               })
     
               done()
