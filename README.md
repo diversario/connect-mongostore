@@ -4,6 +4,7 @@
 
   [![Build Status](https://secure.travis-ci.org/diversario/connect-mongostore.png?branch=master)](http://travis-ci.org/diversario/connect-mongostore)
   [![Coverage Status](https://coveralls.io/repos/diversario/connect-mongostore/badge.png?branch=master)](https://coveralls.io/r/diversario/connect-mongostore?branch=master)
+  [![Dependency Status](https://gemnasium.com/diversario/connect-mongostore.png)](https://gemnasium.com/diversario/connect-mongostore)
   [![NPM version](https://badge.fury.io/js/connect-mongostore.png)](http://badge.fury.io/js/connect-mongostore)
   
 ### Why?
