@@ -20,7 +20,7 @@ via npm:
 
 ## Options
 
-  Pass a fully-qualified URI as the only option (e.g., `mongodb://127.0.0.1:27017/myDatabase`), or an object:
+  Pass a fully-qualified URI as the only option (e.g., `mongodb://127.0.0.1:27017/myDatabase`), or an object (also see `examples` folder for configuration examples):
 
   - `db` Can be three different things:
     - database name (string)
