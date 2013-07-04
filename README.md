@@ -106,13 +106,23 @@ You need `mocha`.
 
     make test
 
-The tests use a database called `connect-mongostore-test`.
+The tests use a database called `connect-mongostore-test`. `make test` **does not** run replica set tests.
 
-Note that replica set tests will fail unless you 1) have a replica set, and 2) set the address of that replica set in `connect-mongostore.test.js` file.
+To run all tests including replica set tests:
+
+    make test-rs
+
+Note that replica set tests will fail unless you 1) have a replica set, and 2) set the address of that replica set either in `CM_REPL_SET_HOST` environment variable or directly in `connect-mongostore.test.js` file.
 
 You can check code coverage report by running
 
     make coverage
+    
+or
+    
+    make coverage-rs
+        
+for coverage with replica set tests.
     
 Coverage report will be in `reports/lcov-report/index.html` file.
 
