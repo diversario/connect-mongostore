@@ -20,7 +20,7 @@ var mongooseDb = {'mongooseConnection': mongoose.connect('mongodb://127.0.0.1:27
   , mongoNativeDb = {'db': new mongo.Db(dbName, new mongo.Server('127.0.0.1', 27017, {}), {'w': defaultOptions.w})}
 
 var replSetMember = {
-  "host" : "192.168.1.225",
+  "host" : process.env.CM_REPL_SET_HOST || "192.168.1.225",
   "port" : -1,
   "options" : {
     "autoReconnect" : false,
