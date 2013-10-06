@@ -1,6 +1,6 @@
 {
   "name": "connect-mongostore",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "MongoDB session store for Connect",
   "keywords": [
     "connect",
