@@ -18,7 +18,7 @@
     "url": "https://github.com/diversario/connect-mongostore/issues"
   },
   "dependencies": {
-    "mongodb": "~1.3.0",
+    "mongodb": "~1.3.19",
     "lodash": "~2.2.0"
   },
   "directories": {
