@@ -48,7 +48,7 @@ via npm:
               }
             }
           ```
-          Configuration options explained [here](http://mongodb.github.io/node-mongodb-native/markdown-docs/database.html)
+          Configuration options explained [here](http://mongodb.github.io/node-mongodb-native/api-generated/server.html)
       + `replicaSetOptions` An object with a single `rs_name` property specifying your replica set name
   - `collection` Collection (optional, default: `sessions`) 
   - `host` MongoDB server hostname (optional, default: `127.0.0.1`). Not needed for Replica Sets.
