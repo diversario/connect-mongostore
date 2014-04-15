@@ -1,6 +1,6 @@
 # connect-mongostore
 
-  MongoDB session store for Connect
+  MongoDB session store for Connect/Express
 
   [![Build Status](https://secure.travis-ci.org/diversario/connect-mongostore.png?branch=master)](http://travis-ci.org/diversario/connect-mongostore)
   [![Coverage Status](https://coveralls.io/repos/diversario/connect-mongostore/badge.png?branch=master)](https://coveralls.io/r/diversario/connect-mongostore?branch=master)
@@ -13,7 +13,7 @@
 
 ## Installation
 
-connect-mongostore supports only connect `>= 1.0.3`.
+connect-mongostore supports connect `>= 1.0.3`, express `3.x` and express `4.x` with express-session.
 
 via npm:
 
@@ -70,12 +70,25 @@ starting your app.
 
 ## Example
 
-With express:
+With express 3.x:
 
     var express = require('express');
     var MongoStore = require('connect-mongostore')(express);
-
+    var app = express();
+    
     app.use(express.session({
+        secret: 'my secret',
+        store: new MongoStore({'db': 'sessions'})
+      }));
+
+With express 4.x:
+
+    var express = require('express');
+    var session = require('express-session');
+    var MongoStore = require('connect-mongostore')(session);
+    var app = express();
+
+    app.use(session({
         secret: 'my secret',
         store: new MongoStore({'db': 'sessions'})
       }));
