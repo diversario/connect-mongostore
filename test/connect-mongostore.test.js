@@ -83,7 +83,7 @@ function dbFromMongooseConnection(mongooseConnection, opts) {
  */
 function authenticate(db, options, cb) {
   if (options.username && options.password) {
-    db.admin().authenticate(options.username, options.password, cb)
+    db.authenticate(options.username, options.password, cb)
   } else cb()
 }
 
