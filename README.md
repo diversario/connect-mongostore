@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/diversario/connect-mongostore.png?label=ready&title=Ready)](https://waffle.io/diversario/connect-mongostore)
 # connect-mongostore
 
   MongoDB session store for Connect/Express
