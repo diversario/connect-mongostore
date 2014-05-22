@@ -18,19 +18,19 @@
     "url": "https://github.com/diversario/connect-mongostore/issues"
   },
   "dependencies": {
-    "mongodb": "~1.4.0",
-    "lodash": "~2.2.0"
+    "mongodb": "~1.4",
+    "lodash": "~2.4"
   },
   "directories": {
     "lib": "./lib"
   },
   "devDependencies": {
-    "mocha": "~1.12.0",
-    "connect": "~1.0",
-    "mongoose": "~2.6.0",
-    "coveralls": "~2.3.0",
-    "istanbul": "~0.1.0",
-    "mocha-istanbul": "~0.2.0"
+    "mocha": "~1.19",
+    "connect": "~2.17",
+    "mongoose": "~3.8",
+    "coveralls": "~2.10",
+    "istanbul": "~0.2",
+    "mocha-istanbul": "~0.2"
   },
   "scripts": {
     "test": "make coveralls"
