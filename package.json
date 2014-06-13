@@ -33,7 +33,8 @@
     "mocha-istanbul": "~0.2"
   },
   "scripts": {
-    "test": "make coveralls"
+    "test": "make coveralls",
+    "test-rs": "make test-rs"
   },
   "main": "index",
   "engines": "node >= 0.8.x"

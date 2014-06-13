@@ -8,19 +8,24 @@ var connect = require('connect')
   , mongo = require('mongodb')
   , _ = require('lodash')
 
+var PORT_1 = process.env.CM_PORT_1 || 27017,
+    PORT_2 = process.env.CM_PORT_2 || 27018,
+    PORT_3 = process.env.CM_PORT_3 || 27019
+
+
 var MongoStore = require('../.')(connect)
 
-var defaultOptions = {'w': 1, 'host': '127.0.0.1', 'port': 27017, 'autoReconnect': true, 'ssl': false}
-  , dbName = 'connect-mongostore-test' 
+var defaultOptions = {'w': 1, 'host': '127.0.0.1', 'port': PORT_1, 'autoReconnect': true, 'ssl': false}
+  , dbName = 'connect-mongostore-test'
   , collectionName = 'sessions'
-  , defaultDbOptions = {'db': dbName}
+  , defaultDbOptions = {'db': dbName, 'port': PORT_1}
   , expirationPeriod = 1000 * 60 * 60 * 24 * 14 // 2 weeks
 
-var mongooseDb = {'mongooseConnection': mongoose.connect('mongodb://127.0.0.1:27017/' + dbName).connections[0]}
-  , mongoNativeDb = {'db': new mongo.Db(dbName, new mongo.Server('127.0.0.1', 27017, {}), {'w': defaultOptions.w})}
+var mongooseDb = {'mongooseConnection': mongoose.connect('mongodb://127.0.0.1:' + PORT_1 + '/' + dbName).connections[0]}
+  , mongoNativeDb = {'db': new mongo.Db(dbName, new mongo.Server('127.0.0.1', PORT_1, {}), {'w': defaultOptions.w})}
 
 var replSetMember = {
-  "host" : process.env.CM_REPL_SET_HOST || "192.168.1.225",
+  "host" : process.env.CM_REPL_SET_HOST || "127.0.0.1",
   "port" : -1,
   "options" : {
     "autoReconnect" : false,
@@ -39,9 +44,9 @@ var replSetConfig = {
   "db": {
     "name" : dbName,
     "servers" : [
-      getReplSetMember(27017),
-      getReplSetMember(27018),
-      getReplSetMember(27019)
+      getReplSetMember(49000),
+      getReplSetMember(49001),
+      getReplSetMember(49002)
     ],
     'replicaSetOptions' : {
       'rs_name' : 'rs0',
@@ -142,7 +147,7 @@ function openDatabase(opts, cb) {
   }
 
   if (db.openCalled) return cb(db)
-  
+
   db.open(function (err) {
     cb(db)
   })
@@ -221,44 +226,44 @@ describe('Connect-mongostore', function () {
           done()
         })
       })
-      
+
       it('after first call getCollection returns the cached collection', function (done) {
         init(function () {
           store.getCollection(function (coll) {
             assert(coll)
-            
+
             coll.__JUST_TESTING = true
-            
+
             store.getCollection(function (coll) {
               assert(coll)
               assert(coll.__JUST_TESTING)
               done()
-            })            
+            })
           })
         })
       })
     })
-    
+
     describe('Set', function () {
       var store, db, collection
-    
+
       function init(opts, done) {
         if (!done) {
           done = opts
           opts = [{}]
         }
-    
+
         if (!Array.isArray(opts)) opts = [opts]
-    
+
         opts.push(ctorOptions)
-    
+
         var config = {}
-    
+
         opts.forEach(function (opt) {
           _.extend(config, opt)
         })
-    
-        
+
+
         getInstances(config, function (_store, _db, _collection) {
           store = _store
           db = _db
@@ -266,62 +271,62 @@ describe('Connect-mongostore', function () {
           done()
         })
       }
-    
+
       afterEach(function (done) {
         cleanup(store, db, collection, function () {
           done()
         })
       })
-      
+
       it('saves session as object', function (done) {
         init(function () {
           var sid = getRandomString()
             , s = {'test': getRandomString()}
             , date = new Date
-          
+
           store.set(sid, s, function (err, session) {
             assert.strictEqual(err, null)
-    
+
             collection.findOne({'_id': sid}, function (err, session) {
               assert(session.expires - date < expirationPeriod + 100)
               delete session.expires
-              
+
               assert.deepEqual(session, {
                 'session': s,
                 '_id': sid
               })
-              
-    
+
+
               done()
             })
           })
         })
       })
-    
+
       it('saves session as string', function (done) {
         init({'stringify': true}, function () {
           var sid = getRandomString()
             , s = {'test': getRandomString()}
             , date = new Date
-          
+
           store.set(sid, s, function (err, session) {
             assert(!err)
-      
+
             collection.findOne({'_id': sid}, function (err, session) {
               assert(session.expires - date < expirationPeriod + 100)
               delete session.expires
-              
+
               assert.deepEqual(session, {
                 'session': JSON.stringify(s),
                 '_id': sid
               })
-    
+
               done()
             })
           })
         })
       })
-      
+
       it('saves session with expiration', function (done) {
         init(function () {
           var sid = getRandomString()
@@ -331,21 +336,21 @@ describe('Connect-mongostore', function () {
               '_expires': new Date
             }
           }
-    
+
           store.set(sid, s, function (err, session) {
             assert.strictEqual(err, null)
-    
+
             collection.findOne({'_id': sid}, function (err, session) {
               assert.deepEqual(session.session, s)
               assert.strictEqual(session._id, sid)
               assert.equal(session.expires.toJSON(), new Date(s.cookie._expires).toJSON())
-    
+
               done()
             })
           })
         })
       })
-      
+
       it('saves session with default expiration', function (done) {
         init(function () {
           var sid = getRandomString()
@@ -356,13 +361,13 @@ describe('Connect-mongostore', function () {
 
           store.set(sid, s, function (err, session) {
             assert.strictEqual(err, null)
-            
+
             var expirationDate = new Date(Date.now() + 1000 * 60 * 60 * 24 * 14) // two weeks
 
             collection.findOne({'_id': sid}, function (err, session) {
               assert.deepEqual(session.session, s)
               assert.strictEqual(session._id, sid)
-              
+
               assert(expirationDate - session.expires < 1000) // a generous 1 second for stuff to run
 
               done()
@@ -396,29 +401,29 @@ describe('Connect-mongostore', function () {
         })
       })
     })
-    
-    
-    
-    
+
+
+
+
     describe('Get', function () {
       var store, db, collection
-    
+
       function init(opts, done) {
         if (!done) {
           done = opts
           opts = [{}]
         }
-    
+
         if (!Array.isArray(opts)) opts = [opts]
-    
+
         opts.push(ctorOptions)
-        
+
         var config = {}
-    
+
         opts.forEach(function (opt) {
           _.extend(config, opt)
         })
-    
+
         getInstances(config, function (_store, _db, _collection) {
           store = _store
           db = _db
@@ -426,18 +431,18 @@ describe('Connect-mongostore', function () {
           done()
         })
       }
-    
+
       afterEach(function (done) {
         cleanup(store, db, collection, function () {
           done()
         })
       })
-      
+
       it('gets session', function (done) {
         init(function () {
           var sid = getRandomString()
             , s = {'one': getRandomString(), 'two': {'three': getRandomString()}, 'four': 42}
-          
+
           collection.insert({'_id': sid, 'session': s}, function (error, ids) {
             store.get(sid, function (err, session) {
               assert.deepEqual(session, s)
@@ -458,12 +463,12 @@ describe('Connect-mongostore', function () {
           })
         })
       })
-      
+
       it('gets session as string', function (done) {
         init({stringify: true}, function () {
           var sid = getRandomString()
             , s = {'one': getRandomString(), 'two': {'three': getRandomString()}, 'four': 42}
-          
+
           collection.insert({'_id': sid, 'session': JSON.stringify(s)}, function (error, ids) {
             store.get(sid, function (err, session) {
               assert.deepEqual(session, s)
@@ -472,12 +477,12 @@ describe('Connect-mongostore', function () {
           })
         })
       })
-      
+
       it('gets length', function (done) {
         init(function () {
           var sid = getRandomString()
             , s = {'one': getRandomString(), 'two': {'three': getRandomString()}, 'four': 42}
-          
+
           collection.insert({'_id': sid, 'session': s}, function (error, ids) {
             store.length(function (err, length) {
               assert(!err)
@@ -487,12 +492,12 @@ describe('Connect-mongostore', function () {
           })
         })
       })
-      
+
       it('destroys a session', function (done) {
         init(function () {
           var sid = getRandomString()
             , s = {'one': getRandomString(), 'two': {'three': getRandomString()}, 'four': 42}
-          
+
           collection.insert({'_id': sid, 'session': s}, function (error, ids) {
             store.destroy(sid, function (err) {
               assert(!err)
@@ -501,12 +506,12 @@ describe('Connect-mongostore', function () {
           })
         })
       })
-    
+
       it('clears all sessions', function (done) {
         init(function () {
           var sid = getRandomString()
             , s = {'one': getRandomString(), 'two': {'three': getRandomString()}, 'four': 42}
-          
+
           collection.insert({'_id': sid, 'session': s}, function (error, ids) {
             store.clear(function (err) {
               collection.count(function (err, count) {
@@ -533,39 +538,39 @@ describe('Connect-mongostore', function () {
         })
       })
     })
-    
-    
-    
+
+
+
     describe('Options', function () {
       after(suiteCallback)
-      
+
       it('support string URL', function (done) {
-        var store = new MongoStore('mongodb://127.0.0.1:27017/connect-mongostore-test/sessions')
+        var store = new MongoStore('mongodb://127.0.0.1:' + PORT_1 + '/connect-mongostore-test/sessions')
         assert.strictEqual(store.db.databaseName, dbName)
         assert.strictEqual(store.db.serverConfig.host, '127.0.0.1')
-        assert.equal(store.db.serverConfig.port, 27017)
-    
+        assert.equal(store.db.serverConfig.port, PORT_1)
+
         store.getCollection(function () {
           assert.equal(store.collection.collectionName, collectionName)
           closeStore(store)
           done()
         })
       })
-    
+
       it('support string URL with auth', function (done) {
-        var store = new MongoStore('mongodb://test:test@127.0.0.1:27017/connect-mongostore-test/sessions')
-    
+        var store = new MongoStore('mongodb://test:test@127.0.0.1:' + PORT_1 + '/connect-mongostore-test/sessions')
+
         assert.strictEqual(store.db.databaseName, dbName)
         assert.strictEqual(store.db.serverConfig.host, '127.0.0.1')
-        assert.equal(store.db.serverConfig.port, 27017)
-    
+        assert.equal(store.db.serverConfig.port, PORT_1)
+
         store.getCollection(function () {
           assert.equal(store.collection.collectionName, collectionName)
           closeStore(store)
           done()
         })
       })
-    
+
       it('require some sort of database option', function () {
         assert.throws(function () {
           new MongoStore({})
@@ -574,24 +579,24 @@ describe('Connect-mongostore', function () {
         assert.throws(function () {
           new MongoStore({'mongooseConnection': 'foobar'}, function () {})
         }, Error)
-        
+
         assert.throws(function () {
           var store = new MongoStore({'db': {}})
           store.getCollection()
         }, /`db` option must be/)
       })
-      
+
       it('support options object with URL', function (done) {
         var store = new MongoStore({
-          'url': 'mongodb://test:test@127.0.0.1:27017/',
+          'url': 'mongodb://test:test@127.0.0.1:' + PORT_1 + '/',
           'db': dbName,
           'collection': collectionName
         })
-    
+
         assert.strictEqual(store.db.databaseName, dbName)
         assert.strictEqual(store.db.serverConfig.host, '127.0.0.1')
-        assert.equal(store.db.serverConfig.port, 27017)
-    
+        assert.equal(store.db.serverConfig.port, PORT_1)
+
         store.getCollection(function () {
           assert.equal(store.collection.collectionName, collectionName)
           closeStore(store)
