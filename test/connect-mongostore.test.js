@@ -44,9 +44,9 @@ var replSetConfig = {
   "db": {
     "name" : dbName,
     "servers" : [
-      getReplSetMember(49000),
-      getReplSetMember(49001),
-      getReplSetMember(49002)
+      getReplSetMember(PORT_1),
+      getReplSetMember(PORT_2),
+      getReplSetMember(PORT_3)
     ],
     'replicaSetOptions' : {
       'rs_name' : 'rs0',
