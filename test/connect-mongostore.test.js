@@ -540,7 +540,7 @@ describe('Connect-mongostore', function () {
       after(suiteCallback)
       
       it('support string URL', function (done) {
-        var store = new MongoStore('mongodb://127.0.0.1:27017/connect-mongostore-test/sessions')
+        var store = new MongoStore('mongodb://127.0.0.1:27017/' + dbName + '/sessions')
         assert.strictEqual(store.db.databaseName, dbName)
         assert.strictEqual(store.db.serverConfig.host, '127.0.0.1')
         assert.equal(store.db.serverConfig.port, 27017)
@@ -600,6 +600,9 @@ describe('Connect-mongostore', function () {
       })
     })
   }
+
+//  tests(replSetConfig, function () {
+//  })
 
   tests(defaultDbOptions, function () {
     tests(mongoNativeDb, function () {

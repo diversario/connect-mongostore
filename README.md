@@ -27,7 +27,7 @@ via npm:
   - `db` Can be three different things:
     - database name (string)
     - mongo-native database instance
-    - object with replica set options. These options requires:
+    - object with replica set options. These options require:
     
       + `name` Database name
       + `servers` Array of replica set server configurations similar to:
