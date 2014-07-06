@@ -55,6 +55,7 @@ via npm:
   - `port` MongoDB server port (optional, default: `27017`) Not needed for Replica Sets.
   - `username` Username (optional)
   - `password` Password (optional)
+  - `authSource` Options for `Db#authenticate` method (optional)
   - `expireAfter` Duration of session cookies in milliseconds (e.g., ones with `maxAge` not defined). Defaults to 2 weeks.
     May be useful if you see a lot of orphaned sessions in the database and want them removed sooner than 2 weeks.
   - `autoReconnect` This is passed directly to the MongoDB `Server` constructor as the auto_reconnect
