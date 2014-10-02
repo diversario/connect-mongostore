@@ -99,7 +99,7 @@ With express 3.x:
     
     app.use(express.session({
         secret: 'my secret',
-        store: new MongoStore({'db': 'sessions'})
+        store: new MongoStore({'databaseName': 'sessions'})
       }));
 
 With express 4.x:
@@ -111,7 +111,7 @@ With express 4.x:
 
     app.use(session({
         secret: 'my secret',
-        store: new MongoStore({'db': 'sessions'})
+        store: new MongoStore({'databaseName': 'sessions'})
       }));
 
 With connect:
