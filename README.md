@@ -8,9 +8,9 @@
   [![NPM version](https://badge.fury.io/js/connect-mongostore.png)](http://badge.fury.io/js/connect-mongostore)
   [![Stories in Ready](https://badge.waffle.io/diversario/connect-mongostore.png?label=ready&title=Ready)](https://waffle.io/diversario/connect-mongostore)
   
-### Why?
+### v1.0.0 Breaking API Change!
   
-  Existing stores work fine but we needed a store that supports replica sets configuration passed to it.
+  Version 1.0.0 introduces use of MongoClient and attempts to simplify options object, therefore breaking backwards compatibility with pre-1.0.0 versions.
 
 ## Installation
 
@@ -22,49 +22,72 @@ via npm:
 
 ## Options
 
-  Pass a fully-qualified URI as the only option (e.g., `mongodb://127.0.0.1:27017/myDatabase`), or an object (also see `examples` folder for configuration examples):
+  Pass a fully-qualified URI as the only option (e.g., `mongodb://127.0.0.1:27017/myDatabase`). 
+  
+  , or an object (also see `examples` folder for configuration examples):
 
-  - `db` Can be three different things:
-    - database name (string)
-    - mongo-native database instance
-    - object with replica set options. These options requires:
-    
-      + `name` Database name
-      + `servers` Array of replica set server configurations similar to:
+```javascript
+// Pass an instance of mongodb-native database
+{
+  db: <MongoDB Native DB instance>
+}
 
-          ```javascript
-            {
-              "host" : "127.0.0.1", // required
-              "port" : 27017, // required
-              "options" : { // all optional
-                "autoReconnect" : false,
-                "poolSize" : 200,
-                "socketOptions" : {
-                  "timeout" : 0,
-                  "noDelay" : true,
-                  "keepAlive" : 1,
-                  "encoding" : "utf8"
-                }
-              }
-            }
-          ```
-          Configuration options explained [here](http://mongodb.github.io/node-mongodb-native/api-generated/server.html)
-      + `replicaSetOptions` An object with a single `rs_name` property specifying your replica set name
-  - `collection` Collection (optional, default: `sessions`) 
-  - `host` MongoDB server hostname (optional, default: `127.0.0.1`). Not needed for Replica Sets.
-  - `port` MongoDB server port (optional, default: `27017`) Not needed for Replica Sets.
-  - `username` Username (optional)
-  - `password` Password (optional)
-  - `authSource` Options for `Db#authenticate` method (optional)
-  - `expireAfter` Duration of session cookies in milliseconds (e.g., ones with `maxAge` not defined). Defaults to 2 weeks.
-    May be useful if you see a lot of orphaned sessions in the database and want them removed sooner than 2 weeks.
-  - `autoReconnect` This is passed directly to the MongoDB `Server` constructor as the auto_reconnect
-                     option (optional, default: false).
-  - `ssl` Use SSL to connect to MongoDB (optional, default: false).
-  - `mongooseConnection` in the form: `mongooseDatabase.connections[0]` to use an existing mongoose connection. (optional)
-  - `stringify` If false, connect-mongostore will serialize sessions using `JSON.stringify` before
-                setting them, and deserialize them with `JSON.parse` when getting them.
-                (optional, default: false). Note that deserialization will not revive Dates, Object IDs and other non-plain objects.
+
+// Pass Mongoose connection
+{
+  mongooseConnection: mongoose.connection[0]
+}
+
+
+// Pass an object with connection options
+{
+  databaseName: 'test',
+  collection: 'session',  // optional
+  host: '127.0.0.1',      // optional
+  port: 27017,            // optional
+  username: 'user',       // optional
+  password: 'pass',       // optional
+  authSource: {},         // options for `Db#authenticate` method (optional)
+  expireAfter: 100000     // duration of session cookies in milliseconds (e.g., ones with `maxAge` not defined). Defaults to 2 weeks.
+  serverOptions: {        // all optional
+    "autoReconnect" : false,
+    "poolSize" : 200,
+    "socketOptions" : {
+      "timeout" : 0,
+      "noDelay" : true,
+      "keepAlive" : 1,
+      "encoding" : "utf8"
+    }
+  },
+  stringify: false        // If false, connect-mongostore will serialize sessions using `JSON.stringify` before
+                          // setting them, and deserialize them with `JSON.parse` when getting them.
+                          // (optional, default: false). Note that deserialization will not revive Dates, Object IDs and other non-plain objects.
+}
+
+// Object with replica set configuration
+
+{
+  databaseName: 'test',
+  servers: [
+    {
+      host: '127.0.0.1', // optional
+      port: 27017,       // optional,
+      options: {}        // see serverOptions above
+    },
+    {}
+  ],
+  username: 'user',    // optional
+  password: 'pass',    // optional
+  autoReconnect: true, // optional
+  ssl: false,          // optional
+  replSet: {           // optional
+    rs_options: {
+      w: 1
+    }
+  }
+}
+```
+
 
 ## Example
 
