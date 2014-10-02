@@ -16,8 +16,13 @@ var defaultOptions = {'w': 1, 'host': '127.0.0.1', 'port': 27017, 'autoReconnect
   , defaultDbOptions = {'db': dbName}
   , expirationPeriod = 1000 * 60 * 60 * 24 * 14 // 2 weeks
 
-var mongooseDb = {'mongooseConnection': mongoose.connect('mongodb://127.0.0.1:27017/' + dbName).connections[0]}
-  , mongoNativeDb = {'db': new mongo.Db(dbName, new mongo.Server('127.0.0.1', 27017, {}), {'w': defaultOptions.w})}
+var mongooseDb = {
+    'mongooseConnection': mongoose.connect('mongodb://127.0.0.1:27017/' + dbName).connections[0]
+    }
+
+var mongoNativeDb = {
+      'db': new mongo.Db(dbName, new mongo.Server('127.0.0.1', 27017, {}), {'w': defaultOptions.w})
+    }
 
 var replSetMember = {
   "host" : process.env.CM_REPL_SET_HOST || "192.168.1.225",
